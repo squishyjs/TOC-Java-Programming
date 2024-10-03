@@ -1,8 +1,6 @@
 import java.util.ArrayDeque; // used for DFA -> look up token in parse table
 import java.util.Arrays;
 
-
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
