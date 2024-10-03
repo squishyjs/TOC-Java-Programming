@@ -21,6 +21,7 @@ class TreeNode {
 	private TreeNode parent;
 	private List<TreeNode> children;
 
+	// non-terminal constructor
 	public TreeNode(Label label, TreeNode parent) {
 		this.label = label;
 		this.token = Optional.empty();
@@ -28,6 +29,7 @@ class TreeNode {
 		children = new ArrayList<TreeNode>();
 	}
 
+	// terminal constructor 
 	public TreeNode(Label label, Token token, TreeNode parent) {
 		this.label = label;
 		this.token = Optional.of(token);
