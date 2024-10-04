@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 
 class PDA {
-	ArrayDeque<TreeNode> stack = new ArrayDeque<>();
+	ArrayDeque<TreeNode> stack = new ArrayDeque<>(); // our DFA stack
 	HashMap<Pair<TreeNode.Label, Token>, ArrayList<TreeNode>> parsingTable = new HashMap<>(); // parsing table
 	ParseTree parseTree;
 
@@ -43,6 +43,19 @@ class PDA {
 			new TreeNode(TreeNode.Label.stat, null),
 			new TreeNode(TreeNode.Label.los, null)
 		)));
+		
+		// R:los, C:char
+		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.los, new Token(Token.TokenType.TYPE, "char")), new ArrayList<TreeNode>(Arrays.asList(
+			new TreeNode(TreeNode.Label.stat, null),
+			new TreeNode(TreeNode.Label.los, null)
+		)));
+
+		// R:los, C:;
+		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.los, new Token(Token.TokenType.SEMICOLON)), new ArrayList<TreeNode>(Arrays.asList(
+			new TreeNode(TreeNode.Label.stat, null),
+			new TreeNode(TreeNode.Label.los, null)
+		)));
+
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.los, new Token(Token.TokenType.RBRACE)), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.epsilon, null)
 		)));
