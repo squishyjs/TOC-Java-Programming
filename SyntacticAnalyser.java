@@ -44,6 +44,12 @@ class PDA {
 			new TreeNode(TreeNode.Label.los, null)
 		)));
 		
+		// R:los, C:if
+		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.los, new Token(Token.TokenType.IF)), new ArrayList<TreeNode>(Arrays.asList(
+			new TreeNode(TreeNode.Label.stat, null),
+			new TreeNode(TreeNode.Label.los, null)
+		)));
+		
 		// R:los, C:char
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.los, new Token(Token.TokenType.TYPE, "char")), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.stat, null),
@@ -56,6 +62,18 @@ class PDA {
 			new TreeNode(TreeNode.Label.los, null)
 		)));
 
+		// R:los, C:System.out.println
+		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.los, new Token(Token.TokenType.PRINT)), new ArrayList<TreeNode>(Arrays.asList(
+			new TreeNode(TreeNode.Label.stat, null),
+			new TreeNode(TreeNode.Label.los, null)
+		)));
+
+		// R:los, C:for
+		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.los, new Token(Token.TokenType.FOR)), new ArrayList<TreeNode>(Arrays.asList(
+			new TreeNode(TreeNode.Label.stat, null),
+			new TreeNode(TreeNode.Label.los, null)
+		)));
+		
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.los, new Token(Token.TokenType.RBRACE)), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.epsilon, null)
 		)));
@@ -66,6 +84,12 @@ class PDA {
 		)));
 
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.stat, new Token(Token.TokenType.SEMICOLON)), new ArrayList<TreeNode>(Arrays.asList(
+			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.SEMICOLON), null)
+		)));
+
+		// R:stat, C:char
+		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.stat, new Token(Token.TokenType.TYPE, "char")), new ArrayList<TreeNode>(Arrays.asList(
+			new TreeNode(TreeNode.Label.decl, null),
 			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.SEMICOLON), null)
 		)));
 
