@@ -23,13 +23,9 @@ class PDA {
 		this.parseTree = new ParseTree(prog);
 
 
-		// 
-		
-
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.prog, new Token(Token.TokenType.PUBLIC)), 
 		
 			new ArrayList<TreeNode>(Arrays.asList(
-
 
 			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.PUBLIC), null),
 			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.CLASS), null),
@@ -53,13 +49,11 @@ class PDA {
 			new TreeNode(TreeNode.Label.stat, null),
 			new TreeNode(TreeNode.Label.los, null)
 		)));
+
+
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.los, new Token(Token.TokenType.RBRACE)), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.epsilon, null)
 		)));
-
-
-
-
 
 
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.boolexpr, new Token(Token.TokenType.AND)), new ArrayList<TreeNode>(Arrays.asList(	
@@ -69,18 +63,16 @@ class PDA {
 		)));
 
 
-
-
-
-
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.stat, new Token(Token.TokenType.TYPE, "int")), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.decl, null),
 			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.SEMICOLON), null)
 		)));
 
+
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.stat, new Token(Token.TokenType.SEMICOLON)), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.SEMICOLON), null)
 		)));
+
 
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.decl, new Token(Token.TokenType.TYPE, "int")), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.type, null),
@@ -88,10 +80,12 @@ class PDA {
 			new TreeNode(TreeNode.Label.possassign, null)
 		)));
 
+
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.possassign, new Token(Token.TokenType.ASSIGN)), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.ASSIGN), null),
 			new TreeNode(TreeNode.Label.expr, null)
 		)));
+
 
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.possassign, new Token(Token.TokenType.SEMICOLON)), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.epsilon, null)
@@ -144,7 +138,6 @@ class PDA {
 			new TreeNode(TreeNode.Label.stat, null),
 			new TreeNode(TreeNode.Label.los, null)
 		)));
-
 
 
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.los, new Token(Token.TokenType.SEMICOLON)), new ArrayList<TreeNode>(Arrays.asList(
@@ -1333,7 +1326,7 @@ class PDA {
 					TreeNode newNode = new TreeNode(TreeNode.Label.terminal, arrayEntry, stackEntry.getParent());
 					stackEntry.getParent().addChild(newNode);
 					i++; // Consume the token
-					continue; 
+					continue;
 				} else {
 
 					if (stackEntryToken.getType() == arrayEntry.getType()) {
@@ -1363,123 +1356,6 @@ class PDA {
 	
 		return this.parseTree;
 	}
-
-	// public ArrayList<TreeNode> parsingTableLookUp(TreeNode.Label variable, Token terminal) throws SyntaxException {
-	// 	Pair<TreeNode.Label, Token> lookupKey = new Pair<TreeNode.Label, Token>(variable,  new Token(terminal.getType()));
-	// 	if (terminal.getType() == Token.TokenType.TYPE) {
-	// 		lookupKey = new Pair<TreeNode.Label, Token>(variable,  new Token(terminal.getType(), terminal.getValue().get()));
-	// 		if (parsingTable.containsKey(lookupKey)) {
-
-	// 			System.out.println("correct: " + lookupKey +"   rule " + parsingTable.get(lookupKey));
-	// 			return parsingTable.get(lookupKey);
-	// 		} else {
-				
-	// 			throw new SyntaxException("syntax error " + lookupKey);
-	// 		}
-	// 	}
-
-	// 	if (parsingTable.containsKey(lookupKey)) {
-	// 		System.out.println("correct: " + lookupKey +"   rule " + parsingTable.get(lookupKey));
-	// 		return parsingTable.get(lookupKey);
-	// 	} else {
-
-	// 		throw new SyntaxException("syntax error" + "syntax error " + lookupKey);
-	// 	}
-	// }
-
-	// public TreeNode getLast() {
-	// 	return stack.pop();
-	// }
-
-
-	// public void clearTree() {
-	// 	this.parseTree = new ParseTree();
-	// }
-
-	// // push the grammar rule to the stack
-	// public void pushIntoStack(List<TreeNode> rule, TreeNode parent) {
-	// 	for (int i = rule.size() - 1; i >= 0; i--) {
-
-	// 		if (rule.get(i).getLabel() != TreeNode.Label.epsilon) {
-	// 			TreeNode currentEntry = rule.get(i);
-	// 			currentEntry.setParent(parent);
-	// 			stack.push(currentEntry);
-	// 		} else {
-	// 			TreeNode currentEntry = rule.get(i);
-	// 			currentEntry.setParent(parent);
-
-	// 			parent.addChild(currentEntry);
-	// 		}
-			
-	// 	}
-	// }
-
-	// public ParseTree process(List<Token> tokens) throws SyntaxException {
-	// 	// create the parse tree
-	// 	if (tokens.size() == 0) {
-	// 		throw new SyntaxException("syntax exception");
-	// 	}
-	// 	int i = 0;
-	
-	// 	while (i < tokens.size()) {
-	// 		TreeNode stackEntry = getLast(); // Pop the stack
-	// 		Token arrayEntry = tokens.get(i); // Get the current token
-	// 		// Print debug info
-	// 		System.out.println("Stack entry: " + stackEntry + " | Token: " + arrayEntry + " | Stack top: " + stack.peek() + " | i: " + i);
-			
-			
-	// 		if (stackEntry.getLabel() == TreeNode.Label.terminal) { // Terminal node
-	// 			Token stackEntryToken = stackEntry.getToken().get(); // Get the token associated with the terminal
-	
-	// 			if (stackEntryToken.equals(arrayEntry)) {
-	// 				// If the terminal matches the current token, add to the tree and move to the next token
-	// 				TreeNode newNode = new TreeNode(TreeNode.Label.terminal, arrayEntry, stackEntry.getParent());
-	// 				stackEntry.getParent().addChild(newNode);
-	// 				i++; // Consume the token
-	// 				continue; 
-	// 			} else {
-
-	// 				if (stackEntryToken.getType() == arrayEntry.getType()) {
-	// 					TreeNode newNode = new TreeNode(TreeNode.Label.terminal, arrayEntry, stackEntry.getParent());
-	// 					stackEntry.getParent().addChild(newNode);
-	// 					i++; // Consume the token
-	// 					continue;
-	// 				} else {
-	// 					// Handle mismatches
-	// 					throw new SyntaxException("syntax error: Token mismatch. Expected: " + stackEntryToken + ", found: " + arrayEntry);
-	// 				}
-	// 			}
-	// 		} else { // Non-terminal node
-	// 			// Look up the parsing rule for this non-terminal and the current token
-	// 			ArrayList<TreeNode> grammarRule = parsingTableLookUp(stackEntry.getLabel(), arrayEntry);
-
-
-
-	// 			if (grammarRule == null) {
-	// 				throw new SyntaxException("syntax error: No rule found for non-terminal: " + stackEntry.getLabel() + " with token: " + arrayEntry);
-	// 			}
-	
-	// 			// Add the current non-terminal (stackEntry) as a child of the parent node
-	// 			if (!stackEntry.getLabel().equals(TreeNode.Label.prog)) {
-	// 				stackEntry.getParent().addChild(stackEntry);
-	// 			}
-				
-	// 			TreeNode parent = stackEntry;
-	// 			pushIntoStack(grammarRule, parent);
-
-				
-				
-	// 			// Push the rule onto the stack
-				
-	// 		}
-
-	// 	}
-	
-	// 	return this.parseTree;
-	// }
-	
-
-
 	
 } 
 
