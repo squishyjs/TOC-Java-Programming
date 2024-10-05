@@ -1,3 +1,5 @@
+
+import java.util.Objects;
 import java.util.Optional;
 
 public class Token {
@@ -16,6 +18,7 @@ public class Token {
 
 	private TokenType type;
 	private Optional<String> value;
+	
 
 	public Token(TokenType type) {
 		this.type = type;
@@ -34,6 +37,10 @@ public class Token {
 	public TokenType getType() {
 		return this.type;
 	}
+
+	public void setNullValue() {
+		this.value = Optional.empty();
+	}
 	
 	@Override
 	public String toString() {
@@ -47,6 +54,12 @@ public class Token {
 		}
 	}
 	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(type, value);
+	}
+
 	@Override
 	public boolean equals(Object other) {
 		if (other == null) return false;
@@ -54,11 +67,9 @@ public class Token {
 		
 		Token t = (Token) other;
 		
-		if (t.type != this.type) return false;
-		
-		if (t.value == null || this.value == null) return t.value == this.value;
-		
-		return t.value.equals(this.value);
+		return (t.type == this.type) && t.value.equals(this.value);
 	}	
-
 }
+
+
+
