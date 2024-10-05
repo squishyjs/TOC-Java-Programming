@@ -13,7 +13,6 @@ public class Token {
 		public boolean isVariable() {
 			return false;
 		}
-
 	};
 
 	private TokenType type;
@@ -56,20 +55,21 @@ public class Token {
 	
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(type, value);
-	}
-
-	@Override
 	public boolean equals(Object other) {
 		if (other == null) return false;
 		if (!Token.class.isAssignableFrom(other.getClass())) return false;
 		
 		Token t = (Token) other;
 		
-		return (t.type == this.type) && t.value.equals(this.value);
+		if (t.type != this.type) return false;
+		
+		if (t.value == null || this.value == null) return t.value == this.value;
+		
+		return t.value.equals(this.value);
 	}	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(type, value);
+	}
 }
-
-
-

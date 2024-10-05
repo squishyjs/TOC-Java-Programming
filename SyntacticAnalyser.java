@@ -1,12 +1,8 @@
-import java.util.ArrayDeque; // used for DFA -> look up token in parse table
+import java.util.ArrayDeque; 
 import java.util.Arrays;
-
-
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
-
 
 
 class PDA {
@@ -21,7 +17,6 @@ class PDA {
 		prog.setParent(prog);
 		stack.add(prog);
 		this.parseTree = new ParseTree(prog);
-
 
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.prog, new Token(Token.TokenType.PUBLIC)), 
 		
@@ -68,24 +63,20 @@ class PDA {
 			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.SEMICOLON), null)
 		)));
 
-
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.stat, new Token(Token.TokenType.SEMICOLON)), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.SEMICOLON), null)
 		)));
 
-
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.decl, new Token(Token.TokenType.TYPE, "int")), new ArrayList<TreeNode>(Arrays.asList(
-			new TreeNode(TreeNode.Label.type, null),
+			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.TYPE), null),
 			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.ID), null),
 			new TreeNode(TreeNode.Label.possassign, null)
 		)));
-
 
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.possassign, new Token(Token.TokenType.ASSIGN)), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.terminal, new Token(Token.TokenType.ASSIGN), null),
 			new TreeNode(TreeNode.Label.expr, null)
 		)));
-
 
 		parsingTable.put(new Pair<TreeNode.Label, Token>(TreeNode.Label.possassign, new Token(Token.TokenType.SEMICOLON)), new ArrayList<TreeNode>(Arrays.asList(
 			new TreeNode(TreeNode.Label.epsilon, null)
@@ -1256,23 +1247,21 @@ class PDA {
 
 	public ArrayList<TreeNode> parsingTableLookUp(TreeNode.Label variable, Token terminal) throws SyntaxException {
 		Pair<TreeNode.Label, Token> lookupKey = new Pair<TreeNode.Label, Token>(variable,  new Token(terminal.getType()));
+
 		if (terminal.getType() == Token.TokenType.TYPE) {
 			lookupKey = new Pair<TreeNode.Label, Token>(variable,  new Token(terminal.getType(), terminal.getValue().get()));
-			if (parsingTable.containsKey(lookupKey)) {
 
-				System.out.println("correct: " + lookupKey +"   rule " + parsingTable.get(lookupKey));
+			if (parsingTable.containsKey(lookupKey)) {
+				System.out.println("correct: " + lookupKey);
 				return parsingTable.get(lookupKey);
 			} else {
-				
 				throw new SyntaxException("syntax error " + lookupKey);
 			}
 		}
 
 		if (parsingTable.containsKey(lookupKey)) {
-			System.out.println("correct: " + lookupKey +"   rule " + parsingTable.get(lookupKey));
 			return parsingTable.get(lookupKey);
 		} else {
-
 			throw new SyntaxException("syntax error" + "syntax error " + lookupKey);
 		}
 	}
@@ -1291,32 +1280,43 @@ class PDA {
 		for (int i = rule.size() - 1; i >= 0; i--) {
 
 			if (rule.get(i).getLabel() != TreeNode.Label.epsilon) {
-				TreeNode currentEntry = rule.get(i);
-				currentEntry.setParent(parent);
-				stack.push(currentEntry);
-			} else {
-				TreeNode currentEntry = rule.get(i);
-				currentEntry.setParent(parent);
+				TreeNode current = rule.get(i);
+				TreeNode stackEntry;
 
-				parent.addChild(currentEntry);
+				if (current.getToken().isPresent()) {
+					stackEntry = new TreeNode(current.getLabel(), current.getToken().get(), parent);
+				} else {
+					stackEntry = new TreeNode(current.getLabel(), parent);
+				}
+				
+				stack.push(stackEntry);
+			} else {
+				TreeNode current = rule.get(i);
+				TreeNode stackEntry;
+				if (current.getToken().isPresent()) {
+					stackEntry = new TreeNode(current.getLabel(), current.getToken().get(), parent);
+				} else {
+					stackEntry = new TreeNode(current.getLabel(), parent);
+				}
+				parent.addChild(stackEntry);
 			}
 			
 		}
 	}
 
 	public ParseTree process(List<Token> tokens) throws SyntaxException {
-		// create the parse tree
 		if (tokens.size() == 0) {
 			throw new SyntaxException("syntax exception");
 		}
+	
 		int i = 0;
 	
 		while (i < tokens.size()) {
 			TreeNode stackEntry = getLast(); // Pop the stack
 			Token arrayEntry = tokens.get(i); // Get the current token
-			// Print debug info
-			System.out.println("Stack entry: " + stackEntry + " | Token: " + arrayEntry + " | Stack top: " + stack.peek() + " | i: " + i);
 			
+			// debug info
+			//System.out.println("Stack entry: " + stackEntry + " | Token: " + arrayEntry + " | Stack top: " + stack.peek() + " | i: " + i);
 			
 			if (stackEntry.getLabel() == TreeNode.Label.terminal) { // Terminal node
 				Token stackEntryToken = stackEntry.getToken().get(); // Get the token associated with the terminal
@@ -1325,43 +1325,39 @@ class PDA {
 					// If the terminal matches the current token, add to the tree and move to the next token
 					TreeNode newNode = new TreeNode(TreeNode.Label.terminal, arrayEntry, stackEntry.getParent());
 					stackEntry.getParent().addChild(newNode);
-					i++; // Consume the token
-					continue;
+					i++; 
+					continue; 
 				} else {
-
+					// Handle token type comparison (special tokens)
 					if (stackEntryToken.getType() == arrayEntry.getType()) {
 						TreeNode newNode = new TreeNode(TreeNode.Label.terminal, arrayEntry, stackEntry.getParent());
 						stackEntry.getParent().addChild(newNode);
 						i++; // Consume the token
-
+						continue;
 					} else {
 						// Handle mismatches
 						throw new SyntaxException("syntax error: Token mismatch. Expected: " + stackEntryToken + ", found: " + arrayEntry);
 					}
 				}
 			} else { // Non-terminal node
-
+				// Look up the parsing rule for this non-terminal and the current token
 				ArrayList<TreeNode> grammarRule = parsingTableLookUp(stackEntry.getLabel(), arrayEntry);
-				TreeNode parent = stackEntry;
+	
+				// Add the current non-terminal (stackEntry) as a child of the parent node
 				if (!stackEntry.getLabel().equals(TreeNode.Label.prog)) {
 					stackEntry.getParent().addChild(stackEntry);
 				}
 				
-				
+				TreeNode parent = stackEntry;
 				pushIntoStack(grammarRule, parent);
-				
 			}
-
 		}
-	
 		return this.parseTree;
 	}
-	
 } 
 
 public class SyntacticAnalyser {
 	public static ParseTree parse(List<Token> tokens) throws SyntaxException {
-
 		PDA pda = new PDA();
 		ParseTree root = pda.process(tokens);
 		return root;
@@ -1401,7 +1397,6 @@ class Pair<A, B> {
 			Pair<?, ?> other = (Pair<?, ?>) o;
 			return other.fst().equals(a) && other.snd().equals(b);
 		}
-
 		return false;
 	}
 }

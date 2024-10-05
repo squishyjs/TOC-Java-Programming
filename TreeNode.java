@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Objects;
 import java.util.Optional;
 
 class TreeNode {
@@ -22,7 +22,6 @@ class TreeNode {
 	private TreeNode parent;
 	private List<TreeNode> children;
 
-	// Constructor for Terminal
 	public TreeNode(Label label, TreeNode parent) {
 		this.label = label;
 		this.token = Optional.empty();
@@ -30,12 +29,15 @@ class TreeNode {
 		children = new ArrayList<TreeNode>();
 	}
 
-	// Constructor for Non-terminal
 	public TreeNode(Label label, Token token, TreeNode parent) {
 		this.label = label;
 		this.token = Optional.of(token);
 		this.parent = parent;
 		children = new ArrayList<TreeNode>();
+	}
+
+	public void setToken(Token token) {
+		this.token = Optional.of(token);
 	}
 
 	public void addChild(TreeNode child) {
@@ -51,7 +53,7 @@ class TreeNode {
 	}
 
 	public void setParent(TreeNode parent) {
-		this.parent = parent; 
+		this.parent = parent;
 	}
 
 	public List<TreeNode> getChildren() {
@@ -65,6 +67,11 @@ class TreeNode {
 	@Override
 	public String toString() {
 		return "[" + this.label + ", " + this.token + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.label, this.token, this.parent);
 	}
 
 }
